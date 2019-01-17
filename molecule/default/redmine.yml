@@ -1,0 +1,15 @@
+---
+rails_app_name: "redmine"
+rails_app_user: "redmine"
+
+rails_app_db:
+  adapter: "{{lookup('env', 'RAILS_APP_DB')}}"
+  database: "{{rails_app_name}}"
+  username: "{{rails_app_user}}"
+  password: >-
+    {{ lookup('password', '/tmp/redmine_password chars=ascii_letters,digits,hexdigits') }}
+
+rails_app_fqdn: "redmine.example.com"
+
+rails_app_path: "/var/www/{{rails_app_name}}"
+rails_app_config_path: "{{rails_app_path}}/shared"
