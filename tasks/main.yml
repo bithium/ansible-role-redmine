@@ -14,6 +14,39 @@
   become: true
   become_user: "{{rails_app_user}}"
 
+- name: Download redmine plugins (git)
+  git:
+    repo: "{{item.url}}"
+    dest: "{{redmine_checkout_path}}/plugins/{{item.path}}"
+    version: "{{item.version | default(omit) }}"
+    depth: 1
+    force: true
+  with_items: "{{redmine_plugins['git']}}"
+  when: redmine_plugins is defined
+  become: true
+  become_user: "{{rails_app_user}}"
+
+- name: Download redmine plugins (file)
+  get_url:
+    url: "{{item.url}}"
+    dest: "{{redmine_checkout_path}}/plugins/"
+    url_username: "{{ item.username | default(omit) }}"
+    url_password: "{{ item.password | default(omit) }}"
+  with_items: "{{redmine_plugins['file']}}"
+  when: redmine_plugins is defined
+  become: true
+  become_user: "{{rails_app_user}}"
+
+- name: Unpack redmine plugins (file)
+  unarchive:
+    src: "{{redmine_checkout_path}}/plugins/{{item.url | urlsplit('path') | basename}}"
+    dest: "{{redmine_checkout_path}}/plugins/"
+    remote_src: True
+  with_items: "{{redmine_plugins['file']}}"
+  when: redmine_plugins is defined
+  become: true
+  become_user: "{{rails_app_user}}"
+
 - name: Enable version as current
   file:
     src: "{{redmine_checkout_path}}"
@@ -82,6 +115,16 @@
     PATH: "{{rubygems_path}}/bin:{{ ansible_env.PATH }}"
   become: true
   become_user: "{{rails_app_user}}"
+
+- name: Run plugins migrations and copies plugins assets
+  command: bundle exec rake redmine:plugins
+  args:
+    chdir: "{{rails_app_path}}"
+  environment:
+    PATH: "{{rubygems_path}}/bin:{{ ansible_env.PATH }}"
+  become: true
+  become_user: "{{rails_app_user}}"
+  when: redmine_plugins is defined
 
 - name: Redmine database default data set
   command: bundle exec rake redmine:load_default_data

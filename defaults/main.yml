@@ -18,3 +18,5 @@ redmine_repos_shared_path: "{{redmine_shared_path}}/repos"
 redmine_config_shared_path: "{{redmine_shared_path}}/config"
 
 redmine_lang: en
+
+# redmine_plugins: {}
