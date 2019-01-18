@@ -1,2 +1,10 @@
 ---
 # vars file for redmine
+
+rails_app_name: "redmine"
+rails_app_user: "redmine"
+
+rails_app_user_home: "/home/{{rails_app_user}}"
+
+rails_app_path: "{{rails_app_user_home}}/current"
+rails_app_config_path: "{{redmine_config_shared_path}}"

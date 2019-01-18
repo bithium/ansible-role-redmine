@@ -1,2 +1,20 @@
 ---
 # defaults file for redmine
+
+# redmine_version:
+
+redmine_url: https://github.com/redmine/redmine.git
+
+redmine_packages:
+  - git
+  - libmagickwand-dev
+
+redmine_checkout_path: "{{rails_app_user_home}}/{{redmine_version}}"
+redmine_shared_path: "{{rails_app_user_home}}/shared"
+
+redmine_log_shared_path: "{{redmine_shared_path}}/log"
+redmine_files_shared_path: "{{redmine_shared_path}}/files"
+redmine_repos_shared_path: "{{redmine_shared_path}}/repos"
+redmine_config_shared_path: "{{redmine_shared_path}}/config"
+
+redmine_lang: en

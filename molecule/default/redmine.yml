@@ -1,9 +1,7 @@
 ---
-rails_app_name: "redmine"
-rails_app_user: "redmine"
+rails_app_db_adapter: postgresql
 
 rails_app_db:
-  adapter: "{{lookup('env', 'RAILS_APP_DB')}}"
   database: "{{rails_app_name}}"
   username: "{{rails_app_user}}"
   password: >-
@@ -11,5 +9,15 @@ rails_app_db:
 
 rails_app_fqdn: "redmine.example.com"
 
-rails_app_path: "/var/www/{{rails_app_name}}"
-rails_app_config_path: "{{rails_app_path}}/shared"
+redmine_version: 3.4.7
+rails_app_bundler: '< 2.0'
+
+redmine_plugins:
+  git:
+    - path: 'redmine_dmsf'
+      url: 'https://github.com/danmunn/redmine_dmsf'
+      version: 'v1.6.2'
+
+  file:
+    - path: 'wiking'
+      url: 'http://projects.andriylesyuk.com/attachments/download/663/wiking-1.1.0.tar.bz2'
