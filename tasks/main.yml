@@ -140,7 +140,7 @@
   file:
     path: "{{rails_app_path}}/{{item}}"
     owner: "{{rails_app_user}}"
-    group: "{{lighttpd_user}}"
+    group: "{{rails_app_user}}"
     mode: 0755
   with_items:
     - tmp

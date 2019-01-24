@@ -1,0 +1,23 @@
+- name: Prepare
+  hosts: all
+
+  vars_files:
+    - redmine.yml
+
+  pre_tasks:
+    - name: Setup image for keeping downloaded packages
+      file:
+        path: /etc/apt/apt.conf.d/docker-clean
+        state: absent
+      when: ansible_os_family == 'Debian'
+
+  roles:
+    - postgresql
+
+  tasks:
+
+    - name: Tweak hosts file for application testing
+      lineinfile:
+        path: "/etc/hosts"
+        line: "127.0.0.1  {{rails_app_fqdn}}"
+        unsafe_writes: true

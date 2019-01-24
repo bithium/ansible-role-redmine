@@ -1,0 +1,22 @@
+---
+- name: Converge
+  hosts: all
+
+  vars:
+    rails_app_proxy: apache2
+
+  vars_files:
+    - redmine.yml
+    - goss.yml
+
+  environment:
+    RAILS_ENV: "production"
+
+  roles:
+    - role: redmine
+
+  tasks:
+
+    - name: Dump host variables for role
+      template: src=config.yml.j2 dest={{goss_test_variables}}
+      notify: restart rails_app
