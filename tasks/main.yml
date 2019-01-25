@@ -100,7 +100,7 @@
   command: bundle exec rake generate_secret_token
   args:
     chdir: "{{rails_app_path}}"
-    creates: "{{rails_app_path}}/config/secret_token.rb"
+    creates: "{{rails_app_path}}/config/initializers/secret_token.rb"
   environment:
     PATH: "{{rubygems_path}}/bin:{{ ansible_env.PATH }}"
   become: true
