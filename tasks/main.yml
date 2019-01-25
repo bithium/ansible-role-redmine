@@ -110,11 +110,11 @@
   command: bundle exec rake db:migrate
   args:
     chdir: "{{rails_app_path}}"
-    creates: "{{rails_app_path}}/db/schema.rb"
   environment:
     PATH: "{{rubygems_path}}/bin:{{ ansible_env.PATH }}"
   become: true
   become_user: "{{rails_app_user}}"
+  changed_when: false
 
 - name: Run plugins migrations and copies plugins assets
   command: bundle exec rake redmine:plugins
@@ -124,6 +124,7 @@
     PATH: "{{rubygems_path}}/bin:{{ ansible_env.PATH }}"
   become: true
   become_user: "{{rails_app_user}}"
+  changed_when: false
   when: redmine_plugins is defined
 
 - name: Redmine database default data set
@@ -135,6 +136,7 @@
     REDMINE_LANG: "{{redmine_lang}}"
   become: true
   become_user: "{{rails_app_user}}"
+  changed_when: false
 
 - name: File system permissions
   file:
