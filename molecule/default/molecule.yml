@@ -15,14 +15,23 @@ platforms:
       - /tmp
       - /run
       - /run/lock
-    privileged: true
+    capabilities:
+      - SYS_ADMIN
     command: /sbin/init
 provisioner:
   name: ansible
+  vvv: true
+  playbooks:
+    prepare: ../common/prepare.yml
+    converge: ../common/playbook.yml
+    verify: ../common/verify.yml
   env:
     RAILS_APP_DB: postgresql
+    RAILS_APP_PROXY: lighttpd
   lint:
     name: ansible-lint
+    options:
+      x: ["ANSIBLE0012"]
 scenario:
   name: default
 verifier:

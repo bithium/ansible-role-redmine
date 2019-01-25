@@ -15,12 +15,18 @@ platforms:
       - /tmp
       - /run
       - /run/lock
-    privileged: true
+    capabilities:
+      - SYS_ADMIN
     command: /sbin/init
 provisioner:
   name: ansible
+  playbooks:
+    prepare: ../common/prepare.yml
+    converge: ../common/playbook.yml
+    verify: ../common/verify.yml
   env:
     RAILS_APP_DB: postgresql
+    RAILS_APP_PROXY: apache2
   lint:
     name: ansible-lint
 scenario:

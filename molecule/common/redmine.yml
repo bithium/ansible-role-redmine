@@ -10,7 +10,7 @@ rails_app_db:
 rails_app_fqdn: "redmine.example.com"
 
 redmine_version: 3.4.7
-rails_app_bundler: '< 2.0'
+rails_app_bundler: 1.17.3
 
 redmine_plugins:
   git:
