@@ -69,7 +69,7 @@
 
 - name: Create configuration file
   template:
-    src: configuration.yml
+    src: configuration.yml.j2
     dest: "{{redmine_config_shared_path}}/configuration.yml"
     owner: "{{rails_app_user}}"
     group: "{{rails_app_user}}"

@@ -3,6 +3,6 @@ default:
   attachments_storage_path: {{redmine_files_shared_path}}
 
 production:
-{% if redmine_config is defined %}
+ {% if redmine_config is defined %}
    {{redmine_config | to_nice_yaml}}
-{% endif %}
+ {% endif %}
