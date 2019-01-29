@@ -26,11 +26,22 @@
   become: true
   become_user: "{{rails_app_user}}"
 
-- name: Download & Install redmine plugins (file)
-  unarchive:
-    src: "{{item.url}}"
+- name: Download redmine plugins (file)
+  get_url:
+    url: "{{item.url}}"
     dest: "{{redmine_checkout_path}}/plugins/"
-    remote_src: true
+    url_username: "{{ item.username | default(omit) }}"
+    url_password: "{{ item.password | default(omit) }}"
+  with_items: "{{redmine_plugins['file']}}"
+  when: redmine_plugins is defined
+  become: true
+  become_user: "{{rails_app_user}}"
+
+- name: Unpack redmine plugins (file)
+  unarchive:
+    src: "{{redmine_checkout_path}}/plugins/{{item.url | urlsplit('path') | basename}}"
+    dest: "{{redmine_checkout_path}}/plugins/"
+    remote_src: True
   with_items: "{{redmine_plugins['file']}}"
   when: redmine_plugins is defined
   become: true
