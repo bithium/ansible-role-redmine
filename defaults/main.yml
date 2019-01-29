@@ -7,6 +7,7 @@ redmine_url: https://github.com/redmine/redmine.git
 
 redmine_packages:
   - git
+  - sendmail
   - libmagickwand-dev
 
 redmine_scm_packages:

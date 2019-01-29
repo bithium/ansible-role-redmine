@@ -1,6 +1,8 @@
 ---
 default:
   attachments_storage_path: {{redmine_files_shared_path}}
+  email_delivery:
+     delivery_method: :sendmail
 
 production:
  {% if redmine_config is defined %}
