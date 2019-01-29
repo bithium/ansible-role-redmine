@@ -22,7 +22,7 @@
     depth: 1
     force: true
   with_items: "{{redmine_plugins['git']}}"
-  when: redmine_plugins is defined
+  when: redmine_plugins is defined and redmine_plugins['git'] is defined
   become: true
   become_user: "{{rails_app_user}}"
 
@@ -33,7 +33,7 @@
     url_username: "{{ item.username | default(omit) }}"
     url_password: "{{ item.password | default(omit) }}"
   with_items: "{{redmine_plugins['file']}}"
-  when: redmine_plugins is defined
+  when: redmine_plugins is defined and redmine_plugins['file'] is defined
   become: true
   become_user: "{{rails_app_user}}"
 
@@ -43,9 +43,17 @@
     dest: "{{redmine_checkout_path}}/plugins/"
     remote_src: True
   with_items: "{{redmine_plugins['file']}}"
-  when: redmine_plugins is defined
+  when: redmine_plugins is defined and redmine_plugins['file'] is defined
   become: true
   become_user: "{{rails_app_user}}"
+
+- name: Install required plugin packages
+  package:
+    name: "{{item[ansible_os_family] | default(item)}}"
+  when: redmine_plugins is defined
+  loop: >-
+      {{ redmine_plugins['git'] | union(redmine_plugins['file'] | default([])) |
+         map(attribute='packages') | reject('undefined') | list }}
 
 - name: Enable version as current
   file:
