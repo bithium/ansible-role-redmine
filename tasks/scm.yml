@@ -1,0 +1,45 @@
+---
+
+- name: Install required packages
+  package: name={{redmine_scm_packages}}
+  become: true
+
+- name: Enable required Apache2 modules
+  apache2_module:
+    name: "{{item}}"
+  loop: "{{redmine_scm_apache2_modules}}"
+  notify: restart apache2
+
+- name: Create folders for Redmine Perl module
+  file:
+    path: /usr/local/lib/site_perl/Apache/Authn
+    state: directory
+  become: true
+
+- name: Link authentication module to into Apache2 perl folder
+  file:
+    src: "{{rails_app_path}}/extra/svn/Redmine.pm"
+    dest: "/usr/local/lib/site_perl/Apache/Authn/Redmine.pm"
+    state: link
+
+- name: Create configuration for Redmine authentication
+  template:
+    src: scm.conf.j2
+    dest: "{{apache2_config_available_path}}/redmine_scm.conf"
+  notify: restart apache2
+
+- name: Include SCM configuration into redmine vhost configuration
+  lineinfile:
+    path: "{{rails_app_proxy_config_path}}"
+    insertafter: ':(.\d+)'
+    line: "{{'Include conf-available/redmine_scm.conf' | indent}}"
+  tags: wip
+
+- name: Ensure proper permissions of repository folders
+  file:
+    path: "{{redmine_repos_shared_path}}"
+    owner: "{{rails_app_user}}"
+    group: "{{apache2_group}}"
+    mode: "g+w"
+    recurse: true
+  become: true

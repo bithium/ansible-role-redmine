@@ -1,0 +1,108 @@
+# Apache2 configuration for redmine SCM support
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^/(git|svn)/ "-" [PT,E=no-proxy]
+</IfModule>
+
+<IfModule mod_perl.c>
+  PerlLoadModule Apache::Authn::Redmine
+  # PerlLoadModule Redmine
+
+  # Enable connection pooling (useful for checkouts with many files)
+  PerlModule DBI
+  PerlOptions +GlobalRequest
+
+  # Enable LDAP(S) authentication (optional)
+  PerlLoadModule Authen::Simple::LDAP
+  PerlLoadModule IO::Socket::SSL
+
+  # Enable SVN access from outside Redmine (web browser, SVN client)
+  <Location /svn>
+      DAV svn
+      SVNParentPath "{{redmine_repos_shared_path}}/svn"
+      SVNReposName "Subversion Repositories"
+      Require all denied
+
+      # Uncomment the following line when using subversion 1.8 or newer
+      # (see http://subversion.apache.org/docs/release-notes/1.8.html#serf-skelta-default)
+      SVNAllowBulkUpdates Prefer
+
+      # If a client tries to svn update which involves updating many files,
+      # the update request might result in an error Server sent unexpected
+      # return value (413 Request Entity Too Large) in response to REPORT
+      # request, because the size of the update request exceeds the limit
+      # allowed by the server. You can avoid this error by disabling the
+      # request size limit by adding the line LimitXMLRequestBody 0
+      LimitXMLRequestBody 0
+
+      # Only check Authentication for root path, nor again for recursive folder.
+      # Redmine core does only permit access on repository level, so this
+      # doesn't hurt security. On the other hand it does boost performance a lot!
+      SVNPathAuthz off
+
+      PerlAccessHandler Apache::Authn::Redmine::access_handler
+      PerlAuthenHandler Apache::Authn::Redmine::authen_handler
+      AuthType Basic
+      AuthName "Redmine SVN Repository"
+      AuthUserFile /dev/null
+
+      # Read-only access
+      <Limit GET PROPFIND OPTIONS REPORT>
+          # Match either the valid user or local source conditions (equivalent to "Satisfy any" in Apache 2.2)
+          <RequireAny>
+              Require valid-user
+              Require local
+          </RequireAny>
+      </Limit>
+
+      # Write access (methods POST, PUT)
+      <LimitExcept GET PROPFIND OPTIONS REPORT>
+          Require valid-user
+      </LimitExcept>
+
+      # Mysql config. You may use localhost instead of <your.mysql.hostname> if MySQL is on the same server
+      RedmineDSN "DBI:mysql:database={{rails_app_db.database}};host=localhost;mysql_socket={{mysql_socket_path}}"
+      RedmineDbUser "{{rails_app_db.username}}"
+      RedmineDbPass "{{rails_app_db.password}}"
+  </Location>
+
+  #--- Enable Git access from outside Redmine
+  ScriptAlias /git/ /usr/lib/git-core/git-http-backend/
+
+  SetEnv GIT_PROJECT_ROOT {{redmine_repos_shared_path}}/git
+  SetEnv GIT_HTTP_EXPORT_ALL 1
+
+  <Location /git>
+      SSLRequireSSL
+      PerlAccessHandler Apache::Authn::Redmine::access_handler
+      PerlAuthenHandler Apache::Authn::Redmine::authen_handler
+      AuthType Basic
+      AuthName "Redmine Git Repository"
+      AuthUserFile /dev/null
+      Require valid-user
+
+      # Mysql config. You may use localhost instead of <your.mysql.hostname> if MySQL is on the same server
+      RedmineDSN "DBI:mysql:database={{rails_app_db.database}};host=localhost;mysql_socket={{mysql_socket_path}}"
+      RedmineDbUser "{{rails_app_db.username}}"
+      RedmineDbPass "{{rails_app_db.password}}"
+      RedmineGitSmartHttp yes
+  </Location>
+
+  Alias /git-private {{redmine_repos_shared_path}}/git
+  <Location /git-private>
+      Require all denied
+      <Limit GET PROPFIND OPTIONS REPORT>
+          Options Indexes FollowSymLinks MultiViews
+          Require local
+      </Limit>
+  </Location>
+
+  <Directory "/usr/lib/git-core">
+      Options +ExecCgi -MultiViews +SymLinksIfOwnerMatch
+      AllowOverride none
+      Order allow,deny
+      Allow from all
+      Require all granted
+  </Directory>
+
+</IfModule>

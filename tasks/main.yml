@@ -149,3 +149,5 @@
     - tmp/pdf
     - files
     - public/plugin_assets
+
+- include_tasks: scm.yml

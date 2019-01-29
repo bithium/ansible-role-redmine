@@ -9,6 +9,28 @@ redmine_packages:
   - git
   - libmagickwand-dev
 
+redmine_scm_packages:
+  - git
+  - libapache2-mod-perl2
+  - libapache2-mod-svn
+  - libapache2-mod-xsendfile
+  - libauthen-simple-ldap-perl
+  - libdbd-mysql-perl
+  - libdbi-perl
+  - libdigest-sha-perl
+  - libnet-ldap-perl
+  - libparams-validate-perl
+  - subversion
+
+redmine_scm_apache2_modules:
+  - authz_svn
+  - cgid
+  - dav
+  - dav_fs
+  - dav_lock
+  - dav_svn
+  - rewrite
+
 redmine_checkout_path: "{{rails_app_user_home}}/{{redmine_version}}"
 redmine_shared_path: "{{rails_app_user_home}}/shared"
 
