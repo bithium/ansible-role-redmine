@@ -122,6 +122,7 @@
     PATH: "{{rubygems_path}}/bin:{{ ansible_env.PATH }}"
   become: true
   become_user: "{{rails_app_user}}"
+  when: not redmine_skip_migrations
   changed_when: false
 
 - name: Run plugins migrations and copies plugins assets
@@ -132,8 +133,10 @@
     PATH: "{{rubygems_path}}/bin:{{ ansible_env.PATH }}"
   become: true
   become_user: "{{rails_app_user}}"
+  when:
+    - redmine_plugins is defined
+    - not redmine_skip_migrations
   changed_when: false
-  when: redmine_plugins is defined
 
 - name: Redmine database default data set
   command: bundle exec rake redmine:load_default_data
@@ -144,6 +147,7 @@
     REDMINE_LANG: "{{redmine_lang}}"
   become: true
   become_user: "{{rails_app_user}}"
+  when: not redmine_skip_migrations
   changed_when: false
 
 - name: File system permissions

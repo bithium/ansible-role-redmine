@@ -42,4 +42,6 @@ redmine_config_shared_path: "{{redmine_shared_path}}/config"
 
 redmine_lang: en
 
+redmine_skip_migrations: false
+
 # redmine_plugins: {}
