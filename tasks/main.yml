@@ -11,6 +11,7 @@
     version: "{{redmine_version}}"
     depth: 1
     force: true
+    update: "{{redmine_version is undefined}}"
   become: true
   become_user: "{{rails_app_user}}"
 
@@ -21,6 +22,7 @@
     version: "{{item.version | default(omit) }}"
     depth: 1
     force: true
+    update: "{{item.version is undefined}}"
   with_items: "{{redmine_plugins['git']}}"
   when: redmine_plugins is defined and redmine_plugins['git'] is defined
   become: true
