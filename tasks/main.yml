@@ -165,3 +165,4 @@
     - public/plugin_assets
 
 - include_tasks: scm.yml
+  when: rails_app_proxy == 'apache2'

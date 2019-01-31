@@ -33,7 +33,6 @@
     path: "{{rails_app_proxy_config_path}}"
     insertafter: ':(.\d+)'
     line: "{{'Include conf-available/redmine_scm.conf' | indent}}"
-  tags: wip
 
 - name: Ensure proper permissions of repository folders
   file:
