@@ -60,8 +60,12 @@
           Require valid-user
       </LimitExcept>
 
+      {% if mysql_socket_path is defined %}
       # Mysql config. You may use localhost instead of <your.mysql.hostname> if MySQL is on the same server
-      RedmineDSN "DBI:mysql:database={{rails_app_db.database}};host=localhost;mysql_socket={{mysql_socket_path}}"
+        RedmineDSN "DBI:mysql:database={{rails_app_db.database}};host=localhost;mysql_socket={{mysql_socket_path}}"
+      {% else %}
+        RedmineDSN "DBI:postgreqsl:database={{rails_app_db.database}};host=localhost"
+      {% endif %}
       RedmineDbUser "{{rails_app_db.username}}"
       RedmineDbPass "{{rails_app_db.password}}"
   </Location>
@@ -81,8 +85,12 @@
       AuthUserFile /dev/null
       Require valid-user
 
+      {% if mysql_socket_path is defined %}
       # Mysql config. You may use localhost instead of <your.mysql.hostname> if MySQL is on the same server
-      RedmineDSN "DBI:mysql:database={{rails_app_db.database}};host=localhost;mysql_socket={{mysql_socket_path}}"
+        RedmineDSN "DBI:mysql:database={{rails_app_db.database}};host=localhost;mysql_socket={{mysql_socket_path}}"
+      {% else %}
+        RedmineDSN "DBI:postgreqsl:database={{rails_app_db.database}};host=localhost"
+      {% endif %}
       RedmineDbUser "{{rails_app_db.username}}"
       RedmineDbPass "{{rails_app_db.password}}"
       RedmineGitSmartHttp yes
