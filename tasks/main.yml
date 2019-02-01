@@ -43,7 +43,7 @@
   unarchive:
     src: "{{redmine_checkout_path}}/plugins/{{item.url | urlsplit('path') | basename}}"
     dest: "{{redmine_checkout_path}}/plugins/"
-    remote_src: True
+    remote_src: true
   with_items: "{{redmine_plugins['file']}}"
   when: redmine_plugins is defined and redmine_plugins['file'] is defined
   become: true
