@@ -65,7 +65,7 @@
     group: "{{rails_app_user}}"
     state: link
 
-- name: Create shared configuration/data folders
+- name: Create shared configuration folders
   file:
     path: "{{item}}"
     owner: "{{rails_app_user}}"
@@ -73,9 +73,16 @@
     state: directory
   loop:
     - "{{redmine_log_shared_path}}"
-    - "{{redmine_files_shared_path}}"
-    - "{{redmine_repos_shared_path}}"
     - "{{redmine_config_shared_path}}"
+
+- name: Create shared data folders
+  file:
+    path: "{{item}}"
+    owner: "{{rails_app_user}}"
+    group: "{{rails_app_proxy_group}}"
+    state: directory
+  loop:
+    - "{{redmine_files_shared_path}}"
 
 - name: Create configuration file
   template:
@@ -151,18 +158,6 @@
   become_user: "{{rails_app_user}}"
   when: not redmine_skip_migrations
   changed_when: false
-
-- name: File system permissions
-  file:
-    path: "{{rails_app_path}}/{{item}}"
-    owner: "{{rails_app_user}}"
-    group: "{{rails_app_user}}"
-    mode: 0755
-  with_items:
-    - tmp
-    - tmp/pdf
-    - files
-    - public/plugin_assets
 
 - include_tasks: scm.yml
   when: rails_app_proxy == 'apache2'

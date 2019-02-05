@@ -26,11 +26,12 @@
     dest: "{{rails_app_proxy_before_config_path}}/scm.conf"
   notify: restart apache2
 
-- name: Ensure proper permissions of repository folders
+- name: Create shared repository folders
   file:
-    path: "{{redmine_repos_shared_path}}"
+    path: "{{item}}"
     owner: "{{rails_app_user}}"
-    group: "{{apache2_group}}"
+    group: "{{rails_app_proxy_group}}"
     mode: "g+w"
-    recurse: true
-  become: true
+    state: directory
+  loop:
+    - "{{redmine_repos_shared_path}}"
